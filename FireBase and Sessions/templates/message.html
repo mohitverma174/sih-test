@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">Tech Sarthi</div>
+        <ul class="menu">
+            <li><a href="#about">About</a></li>
+            <li><a href="#gps-location">Location</a></li>
+            <li><button onclick="logout()">Log Out</button></li>
+        </ul>
+    </nav>
+
+    <!-- Welcome Section -->
+    <section id="welcome">
+        <h1>Welcome, {{ user_name }}!</h1>
+    </section>
+
+    <!-- Message Section -->
+    <section id="message" class="message-section">
+        <div class="message-container">
+            <h2>Send a Message</h2>
+            <textarea id="message-box" placeholder="Type your message here..." rows="5"></textarea>
+            <button onclick="sendMessage()">Submit</button>
+        </div>
+    </section>
+
+    <!-- Message Sent Pop-Up -->
+    <div id="message-popup" class="message-popup">
+        <div class="popup-content">
+            <h3>Message Sent!</h3>
+            <button onclick="closePopup()">OK</button>
+        </div>
+    </div>
+
+
+    <section id="gps-location">
+        <h2>Current Location</h2>
+        {% if gps_data %}
+          <p>Latitude: {{ gps_data.latitude }}</p>
+          <p>Longitude: {{ gps_data.longitude }}</p>
+          <p>Address: {{ gps_data.address }}</p>
+        {% else %}
+          <p>No GPS data available</p>
+        {% endif %}
+      </section>
+      
+
+      <h1>Location on OpenStreetMap</h1>
+      <!-- Map Container -->
+      <div id="map"></div>
+  
+      <script>
+          const coordinates = [ {{ gps_data.latitude }}, {{ gps_data.longitude }}]; // Replace with your provided coordinates
+          const map = L.map('map').setView(coordinates, 13);
+  
+          // Add map tiles from OpenStreetMap
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '© OpenStreetMap contributors'
+          }).addTo(map);
+  
+          // Add a marker at the specified coordinates
+          L.marker(coordinates).addTo(map)
+              .bindPopup('Your Location') // Optional popup text
+              .openPopup();
+      </script>
+  
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
